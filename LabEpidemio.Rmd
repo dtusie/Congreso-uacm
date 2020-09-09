@@ -1,0 +1,162 @@
+---
+title: "Laboratorio Epidemiológico"
+author: "UACM - David Tusie (david.tusie@estudiante.uacm.edu.mx)"
+date: "11/09/2020"
+company: "UACM"
+www: "uacm.edu.mx"
+output:
+  ioslides_presentation: default
+  slidy_presentation: default
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Universidad Autónoma de la Ciudad de México  ------------------------------------------------------ Proyecto: Laboratorio Epidemiológico
+
+- En colaboración con Adan Fermin Castro Añorve
+
+- Asesor: Dr Fernando Ramírez Alatriste
+
+## Laboratorio Epidemiológico
+
+Modelo basado en agentes, programado en **_NetLogo_** para evaluar diferentes escenarios acerca de cómo es la dinámica de contagio de una epidemia en un área urbana o rural, extendiendo el modelo compartimental SIR por sistema de ecuaciones diferenciales ordinarias a los estados SEAIRHD.  
+
+![](seaihrd-fig-01v1.png)   
+
+## Compartimentos del modelo SEAIHRD
+
+![](seaihrd-fig-02.png)
+
+<small>Este modelo pretende ser genérico para diferentes enfermedades con transmisión similar: COVID-19, Influenza, Sarampión, etc.</small>
+
+## Objetivos del modelo SEAIHRD
+
+- **Didáctico:** mostrar a personal, desde estudiantes hasta tomadores de decisiones, la dinámica de dispersión de una epidemia en una población
+- **Descriptivo:** caracterizar los factores que están presentes en un determinado escenario
+- **Analítico:** poder comparar cualitativamente diversas dinámicas de epidemia entre diferentes escenarios
+- **Prospectivo:** calibrando el modelo para un área específica, poder pronosticar el resultado de implementar un conjunto de políticas de forma simultánea
+
+## Escenarios que se pueden analizar  
+
+- Aplicar varios periodos de confinamiento con diferente intensidad y duración y hacerlo selectivo o aleatorio  
+- Considerar una población donde las mujeres se desplazan similar a los hombres o menos (trabajadoras o amas de casa)  
+- Considerar una población relativamente sana o enferma [Calculadora de riesgo Covid del IMSS](http://www.imss.gob.mx/covid-19/calculadora-complicaciones)  
+- Considerar una población joven (como la mexicana) o vieja, como por ejemplo, la italiana  
+- Considerar una movilidad típica de ciudad o de región rural  
+- Aplicar pruebas PCR, confinando a los positivos  
+- Iniciar con diversas proporciones de población inmune (ya vacunada)  
+
+## Condiciones iniciales
+
+- Cantidad y distribución de agentes en estado Expuesto
+- Cantidad y distribucion de agentes ya vacunados (Influenza o Sarampión)
+- Densidad de población hasta en 28 zonas diferentes dentro del área de estudio
+- Centros atractores de viajes (escuelas, oficinas, centros comerciales)
+- Probabilidades de pasar de un estado a otro cuando hay interacción
+- Tiempos medios característicos por estado (se generan probabilísticamente: media y ds)
+
+## Condiciones iniciales
+![](seaihrd-fig-05b.png)   
+
+## Ventajas vs un modelo similar por EDO
+
+Ejemplo de un sistema de ecuaciones diferenciales ordinarias para un modelo más completo, acá el de CDMX:
+![](seaihrd-fig-04.png)   
+
+
+## Ventajas vs un modelo similar por EDO
+
+- La interacción entre agentes no es homogénea ni uniforme, sino que depende de sus hábitos de desplazamiento y zonas de habitación
+- Hay 2 clases de contagio: por contacto/cercanía y por pasar por una nube de alguien que tosió/estornudó
+- Hay 2 modos de desplazamiento: browniano y salto de Lévy
+- La población está estratificada por género y por edad, lo cual implica diferentes niveles de riesgo y de movilidad
+- Se hace la distinción entre recuperados de hospital, de enfermos sintomáticos y de asintomáticos, además, sus tiempos de inmunidad pueden ser diferentes
+- Además de que un Susceptible puede exponerse por agentes expuestos, asintomicos, sintomáticos y hospitlizados, también puede serlo por recuperados y por difuntos
+
+``` {r lee}
+## Resultados analíticos
+# Comparación de 2 poblaciones: Enferma/Madura vs Sana/Joven  
+library(readr)
+
+# 1:J Inmov-sel = T, Igual-gen= T, Joven= F, Sana= F, Ciudad= T
+td1 <- read_csv("SEAIHRD-td-J564.csv",
+      col_types = "iiicinniiiiiiiiiiiiiiiiiiiiiii")
+
+# 2:V Inmov-sel = T, Igual-gen= T, Joven= T, Sana= T, Ciudad= T
+td2 <- read_csv("SEAIHRD-td-V830.csv",
+      col_types = "iiicinniiiiiiiiiiiiiiiiiiiiiii")
+
+```
+
+``` {r resumedad}
+# Análisis de edades
+#summary(td1$edad)
+#summary(td2$edad)
+```
+
+``` {r resumvulne}
+# Análisis de vulnerabilidad
+#summary(td1$facvul)
+#summary(td2$facvul)
+```
+## Análisis por EDAD de la población
+
+``` {r histoedad}
+par(mfrow = c(1,2))
+
+hist(td1$edad, col = "blue", xlim = c(0,9), ylim = c(0,2000), main = "Madura y enferma", xlab = "rango de edad", ylab = "personas")
+#rug(td1$edad)
+
+hist(td2$edad, col = "green", xlim = c(0,9), ylim = c(0,2000), main = "Joven y sana", xlab = "rango de edad", ylab = "personas")
+#rug(td2$edad)
+```
+
+## Análisis por SALUD de la población
+
+``` {r salud}
+par(mfrow = c(1,2))
+boxplot(td1$facvul,col = "red", main= "Enferma y madura")
+boxplot(td2$facvul,col = "green", main= "Sana y joven", ylab = "Factor de vulnerabiliad")
+```
+
+## Resultados: Hospitalizaciones según tipo de población
+
+```{r hosp}
+par(mfrow = c(1,2))
+#h1 <- filter(td1$nvh, td1$nvh > 0)
+#hist(h1, main = "M + E", xlim = c(1,1), ylim = c(0,1500), col = "red", xlab = #"hospitalizaciones")
+hist(td1$nvh, main = "M + E", xlim = c(1,1), ylim = c(0,1500), col = "red", xlab = " ", ylab = "hospitalizaciones")
+#
+hist(td2$nvh, main= "J + S", xlim = c(1,1), ylim = c(0,1500), col = "green", xlab = " ", ylab = "hospitalizaciones")
+#hist(td2$nvh)
+```
+
+## Resultados: Defunciones según tipo de población
+
+```{r defun}
+par(mfrow = c(1,2))
+hist(td1$edo, main = "M + E", xlim = c(5,10), ylim = c(0,600), col = "red", ylab = "Defunciones", xlab = " ")
+hist(td2$edo, main= "J + S", xlim = c(5,10), ylim = c(0,600), col = "green", ylab = "Defunciones", xlab = " ")
+```
+
+## Conclusiones preliminares
+
+El modelo SEAIHRD es útil para:   
+  
+- comunicar y enseñar    
+  
+- divulgar y ejemplificar
+  
+- realizar comparaciones cualitativas entre diversos escenarios  
+  
+- explorar qué sucede al aplicar diversas políticas de respuesta  
+
+## Siguientes pasos
+
+- Llevar a cabo el análisis estadístico de resultados y comparar entre diversos escenarios  
+- Hacer el análisis de sensibilidad para diversos parámetros  
+- Validar si es posible hacer comparaciones y predicciones con poblaciones a escala (por ejemplo: con 210 mil agentes tendríamos el 1% del AMCM, ¿podemos escalar los resultados?)  
+- Incluir políticas de vacunación y ver el comportamiento de la dinámica  
