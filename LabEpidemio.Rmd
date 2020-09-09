@@ -14,7 +14,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Universidad Autónoma de la Ciudad de México  ------------------------------------------------------ Proyecto: Laboratorio Epidemiológico
+## UACM - Ciencias de la Complejidad  ------------------------------------------------------ Proyecto: Laboratorio Epidemiológico
 
 - En colaboración con Adan Fermin Castro Añorve
 
