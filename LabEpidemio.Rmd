@@ -2,7 +2,7 @@
 title: "Laboratorio Epidemiológico"
 author: "UACM - David Tusie Luna (david.tusie@estudiante.uacm.edu.mx)"
 date: "11/09/2020"
-company: "UACM"
+company: "UACM - Maestría en Ciencias de la Complejidad"
 www: "uacm.edu.mx"
 output:
   ioslides_presentation: default
