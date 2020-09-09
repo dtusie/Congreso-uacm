@@ -1,6 +1,6 @@
 ---
 title: "Laboratorio Epidemiológico"
-author: "UACM - David Tusie (david.tusie@estudiante.uacm.edu.mx)"
+author: "UACM - David Tusie Luna (david.tusie@estudiante.uacm.edu.mx)"
 date: "11/09/2020"
 company: "UACM"
 www: "uacm.edu.mx"
@@ -30,7 +30,7 @@ Modelo basado en agentes, programado en **_NetLogo_** para evaluar diferentes es
 
 ![](seaihrd-fig-02.png)
 
-<small>Este modelo pretende ser genérico para diferentes enfermedades con transmisión similar: COVID-19, Influenza, Sarampión, etc.</small>
+<small>Este modelo pretende ser genérico para diferentes enfermedades con modo de transmisión similar: COVID-19, Influenza, Sarampión, etc.</small>
 
 ## Objetivos del modelo SEAIHRD
 
